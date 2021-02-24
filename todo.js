@@ -4,7 +4,20 @@ const toDoForm = document.querySelector(".js-toDoForm"),
 
 const TODOS_LS = 'toDos';
 
-const toDos = [];
+let toDos = [];
+
+function deleteToDo(event){
+      const btn = event.target;
+      const li = btn.parentNode;
+      toDoList.removeChild(li);
+      const cleanToDos = toDos.filter(function(toDo){
+          return toDo.id !== parseInt(li.id);
+      });
+      /* filter : array안의 모든 toDos를 통과(함수실행)하면서 True인 것들의 toDos만 return할 것 
+      true인 아이템만 가지고 array를 만듬 */
+      toDos = cleanToDos
+      saveToDos();
+}
 
 function saveToDos(){
     localStorage.setItem(TODOS_LS, JSON.stringify(toDos));
@@ -16,6 +29,7 @@ function paintToDo(text){
     // querySelector가 html에 있는값을 가져오는거라면 createElement는 html에 없는 값을 만들어내는 것
     const delBtn = document.createElement("button");
     delBtn.innerText = "❌";
+    delBtn.addEventListener("click", deleteToDo);
     const span = document.createElement("span");
     const newId = toDos.length + 1;
     span.innerText = text;
