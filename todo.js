@@ -4,19 +4,39 @@ const toDoForm = document.querySelector(".js-toDoForm"),
 
 const TODOS_LS = 'toDos';
 
+const toDos = [];
+
+function saveToDos(){
+    localStorage.setItem(TODOS_LS, JSON.stringify(toDos));
+    // JSON.stringify는 JS의 Object를 string으로 바꿔줌
+}
+
 function paintToDo(text){
     const li = document.createElement("li");
     // querySelector가 html에 있는값을 가져오는거라면 createElement는 html에 없는 값을 만들어내는 것
     const delBtn = document.createElement("button");
     delBtn.innerText = "❌";
     const span = document.createElement("span");
+    const newId = toDos.length + 1;
     span.innerText = text;
     li.appendChild(delBtn);
     li.appendChild(span);
+    li.id = newId;
     // appendChild : 입력된 값을 부모 element에 추가하는 것
     // span,버튼을 리스트에 넣는다
     toDoList.appendChild(li);
     // 완성된 리스트를 toDoList에 넣는다
+    const toDoObj = {
+        text: text,
+        id: newId
+    };
+    toDos.push(toDoObj);
+    // toDoObj를 toDos(list)에 추가한다, array 안에 element 하나를 넣어준다
+    saveToDos();
+    /*push한 이후에 호출할 것, 미리하면 toDos는 비어있으니 저장할게 없는 상태가됨
+    localStorage에는 JS의 data를 저장할 순 없음, 오직 string만 가능
+    이를 해결하기 위해 JSON.stringify를 사용함
+    JSON = JavaScript Object Notation */
 }
 
 function handleSubmit(event){
@@ -28,9 +48,14 @@ function handleSubmit(event){
 }
 
 function loadToDos(){
-    const toDos = localStorage.getItem(TODOS_LS);
-    if(toDos !== null){
-
+    const loadedToDos = localStorage.getItem(TODOS_LS);
+    if(loadedToDos !== null){
+        const parsedToDos = JSON.parse(loadedToDos);
+        // string으로 바뀐 것을 object로 다시 바꿔주는 작업 with JSON
+        parsedToDos.forEach(function(toDo){
+             paintToDo(toDo.text);
+        });
+        // forEach = array에 담겨있는 것들을 각각 한번씩 함수를 실행시켜주는 것, 안에다 바로 함수를 만든다, 물론 함수를 밖에다 따로 만들어도 됨 
     }
 }
 
